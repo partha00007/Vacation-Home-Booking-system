@@ -1,32 +1,29 @@
 import click
+from api import user
+from formatter import print_users, print_message
 
 @click.group()
 def cli():
-    """Cli tools fo admin"""
-   
+    """Admin CLI Tool to manage users, listings, and reviews."""
     pass
 
-#Define a Command for Greeting Users
+@cli.group()
+def users():
+    """Manage users"""
+    pass
 
-@click.command()
-@click.argument("username")
+@users.command("list")
+def list_users():
+    """List all users"""
+    users_data = user.list_users()
+    print_users(users_data)
 
-def greet(username):
-    """Greet a user"""
-    click.echo(f"Hello and welcome, {username}!")
+@users.command("delete")
+@click.argument("user_id")
+def delete_user(user_id):
+    """Delete a user by ID"""
+    status, message = user.delete_user(user_id)
+    print_message(status, message)
 
-
-#Define a Command for system status  and verbose mode defines how much extra info you want the script to give
-
-@click.command()
-@click.option("--verbose", is_flag=True, help="Enable verbose mode")
-def status(verbose):
-    """show system status"""
-    if verbose:
-        click.echo("System Status: Running smoothly with detailed logs.")
-    else:
-        click.echo("System Status: Running.")
-cli.add_command(greet)
-cli.add_command(status)       
 if __name__ == "__main__":
     cli()
