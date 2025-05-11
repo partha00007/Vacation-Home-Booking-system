@@ -24,7 +24,7 @@ def register(request):
         try:
             # Try saving the user and return a success response
             user = serializer.save()
-            return JsonResponse(serializer.data, status=201)  # User created successfully
+            return JsonResponse({'message': 'registration successful','user': serializer.data}, status=201)  # User created successfully
         except Exception as e:
             # If there's an exception during the save, log it and return a 500 error
             print("Error during user save:", str(e))
