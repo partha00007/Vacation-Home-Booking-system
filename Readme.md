@@ -60,51 +60,247 @@ Server will be running at: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
 
-## 📌 API Endpoints
 
-> Base URL: `http://127.0.0.1:8000/api/`
+## 📌 Endpoints
 
-### 🔐 Register a new user
+---
 
-**POST** `/api/register/`
+### 🔐 Register User
 
-**Body (x-www-form-urlencoded or JSON):**
+**URL:** `/api/register`
+**Method:** `POST`
+**Auth Required:** ❌
+
+**Request Body:**
+
 ```json
 {
-  "userName": "demo",
-  "password": "987654321",
-  "firstName": "demo",
-  "lastName": "demo",
-  "email": "d@gmail.com",
-  "mobileNo": "011323243434",
-  "role": "1"
+  "userName": "johndoe",
+  "password": "securepassword",
+  "email": "john@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "mobileNo": "1234567890",
+  "role": 1
 }
 ```
 
-### 🔑 Login
+**Success Response:**
 
-**GET** `/api/login/?userName=ira&password=987654321`
-
-**Returns:**
 ```json
 {
-  "message": "Login successful",
+  "message": "registration successful",
   "user": {
-    "userName": "ira",
-    "email": "shanjida@gmail.com",
-    "firstName": "Shanjida",
-    "lastName": "Rahaman",
-    "mobileNo": "011323243434",
-    "role": "Admin"
+    ...user data...
   }
 }
 ```
 
-### 🚪 Logout
+**Error Responses:**
 
-**GET** `/api/logout/?userName=ira`
+* 400: Role does not exist or validation errors
+* 500: Internal server error
 
 ---
+
+### 🔑 Login
+
+**URL:** `/api/login`
+**Method:** `POST`
+**Auth Required:** ❌
+
+**Request Body:**
+
+```json
+{
+  "userName": "johndoe",
+  "password": "securepassword"
+}
+```
+
+**Success Response:**
+
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "userName": "johndoe",
+    "email": "john@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "mobileNo": "1234567890",
+    "role": "User"
+  }
+}
+```
+
+**Error Responses:**
+
+* 400: Missing fields or invalid credentials
+
+---
+
+### 🚪 Logout
+
+**URL:** `/api/logout`
+**Method:** `POST`
+**Auth Required:** ✅ (via session)
+
+**Success Response:**
+
+```json
+{
+  "message": "Logout successful"
+}
+```
+
+**Error Responses:**
+
+* 400: User not logged in
+
+---
+
+### 👥 Get All Users (Admin Only)
+
+**URL:** `/api/get_all_users`
+**Method:** `GET`
+**Auth Required:** ✅ (Admin only)
+
+**Success Response:**
+
+```json
+[
+  {
+    "userName": "johndoe",
+    "email": "john@example.com",
+    ...
+  },
+  ...
+]
+```
+
+**Error Responses:**
+
+* 401: Authentication required
+* 403: Permission denied
+
+---
+
+### ✅ Get Active Users (Admin Only)
+
+**URL:** `/api/get_active_users`
+**Method:** `GET`
+**Auth Required:** ✅ (Admin only)
+
+**Success Response:**
+
+```json
+[
+  {
+    "userName": "janedoe",
+    "email": "jane@example.com",
+    ...
+  },
+  ...
+]
+```
+
+**Error Responses:**
+
+* 401: Authentication required
+* 403: Permission denied
+
+---
+
+### ❌ Delete User (Admin Only)
+
+**URL:** `/api/delete_user`
+**Method:** `POST`
+**Auth Required:** ✅ (Admin only)
+
+**Request Body:**
+
+```json
+{
+  "userName": "johndoe"
+}
+```
+
+**Success Response:**
+
+```json
+{
+  "message": "User deleted successfully"
+}
+```
+
+**Error Responses:**
+
+* 401: Authentication required
+* 403: Permission denied
+* 404: User not found
+
+---
+
+### 🟢 Activate User (Admin Only)
+
+**URL:** `/api/activate_user`
+**Method:** `POST`
+**Auth Required:** ✅ (Admin only)
+
+**Request Body:**
+
+```json
+{
+  "userName": "johndoe"
+}
+```
+
+**Success Response:**
+
+```json
+{
+  "message": "User activated successfully"
+}
+```
+
+**Error Responses:**
+
+* 401: Authentication required
+* 403: Permission denied
+* 404: User not found
+* 400: User is already active
+
+---
+
+## ⚠️ Notes
+
+* Session-based authentication is used (`request.session`).
+* Only users with `roleName` = `'admin'` are authorized to use admin-level endpoints.
+* Users are soft-deleted using the `isDeleted` field.
+* Ensure the `Role` model is properly populated for registration to work.
+
+---
+
+## ✅ Requirements
+
+* Django
+* Django REST Framework
+
+---
+
+## 🛠️ Run the Server
+
+```bash
+python manage.py runserver
+```
+
+---
+
+## 🧪 Testing
+
+Use tools like Postman or curl to test endpoints, making sure cookies are preserved for session-based authentication.
+
 
 ## ⚙️ Admin Panel
 
