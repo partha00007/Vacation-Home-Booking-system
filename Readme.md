@@ -86,7 +86,7 @@ uvicorn main:app --reload --port 8001
 ### Or start both using `concurrently`
 ```bash
 npm install -g concurrently
-concurrently "uvicorn main:app --reload --port 8001" "python manage.py runserver 8000"
+concurrently "uvicorn fastapi_service.main:app --reload --port 8001" "python backend/manage.py runserver 8000"
 ```
 
 ---
