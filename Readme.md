@@ -23,7 +23,7 @@ This project consists of two backend services:
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://gitlab.hsrw.eu/31245/vacation_home_booking_system
 cd vacation-home-booking-system
 ```
 
@@ -177,6 +177,81 @@ python Cli_admin.py test
 ```bash
 pip freeze > requirements.txt
 ```
+
+---
+
+---
+
+## 🐳 Docker Usage
+
+You can run the entire stack (Django, FastAPI, and MongoDB) using Docker.
+
+### 🧱 1. Project Structure (important)
+Make sure your project is structured like this:
+
+```
+vacation_home_booking_system/
+├── backend/                # Django project with manage.py
+├── fastapi_service/        # FastAPI service (main.py, etc.)
+├── config/                 # Contains .env with MONGODB_URI
+├── Dockerfile.django
+├── Dockerfile.fastapi
+├── docker-compose.yml
+├── requirements.txt
+└── .dockerignore
+```
+
+### ⚙️ 2. Update `.env`
+
+If you're using **MongoDB Atlas (cloud)**, leave `.env` like this:
+
+```env
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority
+```
+
+> ✅ Do NOT include a `mongo:` service in `docker-compose.yml` in that case.
+
+If you're using **local MongoDB via Docker**, then set:
+
+```env
+MONGODB_URI=mongodb://mongo:27017/
+```
+
+And include the `mongo:` service in your `docker-compose.yml`.
+
+---
+
+### 🚀 3. Build and Start Services
+
+```bash
+docker-compose up --build
+```
+
+---
+
+### 👤 4. Create Django Superuser (if needed)
+
+```bash
+docker-compose exec django python manage.py migrate
+docker-compose exec django python manage.py createsuperuser
+```
+
+---
+
+### 🧪 5. Access the Services
+
+- Django: http://localhost:8000/
+- FastAPI: http://localhost:8001/
+
+---
+
+### 🧼 6. Stop and Clean Up
+
+```bash
+docker-compose down -v
+```
+
+This will stop containers and delete volumes.
 
 ---
 
