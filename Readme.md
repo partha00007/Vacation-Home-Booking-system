@@ -1,6 +1,10 @@
-# 🏡 Vacation Home Booking System – Backend API
+# 🏡 Vacation Home Booking System – Backend (Django + FastAPI)
 
-This is the **backend REST API** for the Vacation Home Booking System, built using **Django** and **Django REST Framework**. It handles user registration, login, logout, and role-based access.
+This project consists of two backend services:
+
+- **Django + Django REST Framework**: Handles user authentication, admin controls, and role-based access.
+- **FastAPI + MongoDB**: Manages vacation home listings and user reviews.
+- Also includes a **CLI Tool** for administrative tasks.
 
 ---
 
@@ -8,337 +12,174 @@ This is the **backend REST API** for the Vacation Home Booking System, built usi
 
 - Python 3.9+
 - pip
-- Git (optional, but helpful)
-- A virtual environment tool (recommended: `venv`)
+- Git (optional)
+- `venv` (for virtual environments)
+- MongoDB Atlas connection string
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. **Clone the repository**
+### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/yourusername/vacation-home-booking-system.git
+git clone <your-repo-url>
 cd vacation-home-booking-system
 ```
 
-### 2. **Create a virtual environment and activate it**
+### 2. Create and Activate Virtual Environment
+
 ```bash
 python -m venv venv
-# Activate on Windows
+# On Windows
 venv\Scripts\activate
-# Or on macOS/Linux
+# On macOS/Linux
 source venv/bin/activate
 ```
 
-### 3. **Install dependencies**
+### 3. Install Dependencies
+
+If you have a `requirements.txt`:
 ```bash
 pip install -r requirements.txt
 ```
 
+If not:
+```bash
+pip install django djangorestframework fastapi pymongo python-dotenv requests click rich uvicorn
+```
 
-### 4. **Apply migrations**
+---
+
+## 🔐 Environment Variables
+
+Create two files in the root project directory:
+
+### `.env` (for FastAPI/Django shared configs)
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/?retryWrites=true&w=majority
+```
+
+### `fd.env` (used by the CLI tool)
+```
+FASTAPI_BASE_URL=http://127.0.0.1:8001
+DJANGO_BASE_URL=http://127.0.0.1:8000
+```
+
+---
+
+## ⚙️ Running the Servers
+
+### Start Django (port 8000)
 ```bash
 python manage.py makemigrations
 python manage.py migrate
-```
-
-### 5. **Create a superuser (for admin access)**
-```bash
 python manage.py createsuperuser
+python manage.py runserver 8000
 ```
 
-### 6. **Run the server**
+### Start FastAPI (port 8001)
 ```bash
-python manage.py runserver
+uvicorn main:app --reload --port 8001
 ```
 
-Server will be running at: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+### Or start both using `concurrently`
+```bash
+npm install -g concurrently
+concurrently "uvicorn main:app --reload --port 8001" "python manage.py runserver 8000"
+```
 
 ---
 
+## 🧪 CLI Tool (Admin Operations)
 
+### Basic usage
+```bash
+python Cli_admin.py --help
+```
+
+### Authentication
+```bash
+python Cli_admin.py login <username> <password>
+```
+
+### Manage Users
+```bash
+python Cli_admin.py users list
+python Cli_admin.py users delete <username>
+```
+
+### Manage Listings
+```bash
+python Cli_admin.py listings list
+python Cli_admin.py listings delete <listing_id>
+```
+
+### Manage Reviews
+```bash
+python Cli_admin.py reviews list <listing_id>
+python Cli_admin.py reviews delete <listing_id> <review_id>
+```
+
+### Run API Tests
+```bash
+python Cli_admin.py test
+```
 
 ---
 
-
-## 📌 Endpoints
-
----
+## 📬 Django API Endpoints
 
 ### 🔐 Register User
-
-**URL:** `/api/register`
-**Method:** `POST`
-**Auth Required:** ❌
-
-**Request Body:**
-
-```json
-{
-  "userName": "johndoe",
-  "password": "securepassword",
-  "email": "john@example.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "mobileNo": "1234567890",
-  "role": 1
-}
-```
-
-**Success Response:**
-
-```json
-{
-  "message": "registration successful",
-  "user": {
-    ...user data...
-  }
-}
-```
-
-**Error Responses:**
-
-* 400: Role does not exist or validation errors
-* 500: Internal server error
-
----
+- `POST /api/register`
 
 ### 🔑 Login
-
-**URL:** `/api/login`
-**Method:** `POST`
-**Auth Required:** ❌
-
-**Request Body:**
-
-```json
-{
-  "userName": "johndoe",
-  "password": "securepassword"
-}
-```
-
-**Success Response:**
-
-```json
-{
-  "message": "Login successful",
-  "user": {
-    "userName": "johndoe",
-    "email": "john@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
-    "mobileNo": "1234567890",
-    "role": "User"
-  }
-}
-```
-
-**Error Responses:**
-
-* 400: Missing fields or invalid credentials
-
----
+- `POST /api/login`
 
 ### 🚪 Logout
+- `POST /api/logout`
 
-**URL:** `/api/logout`
-**Method:** `POST`
-**Auth Required:** ✅ (via session)
-
-**Success Response:**
-
-```json
-{
-  "message": "Logout successful"
-}
-```
-
-**Error Responses:**
-
-* 400: User not logged in
+### 👥 Admin User Controls
+- `GET /api/get_all_users`
+- `GET /api/get_active_users`
+- `POST /api/delete_user`
+- `POST /api/activate_user`
 
 ---
 
-### 👥 Get All Users (Admin Only)
+## 🏠 FastAPI Listings Microservice
 
-**URL:** `/api/get_all_users`
-**Method:** `GET`
-**Auth Required:** ✅ (Admin only)
-
-**Success Response:**
-
-```json
-[
-  {
-    "userName": "johndoe",
-    "email": "john@example.com",
-    ...
-  },
-  ...
-]
-```
-
-**Error Responses:**
-
-* 401: Authentication required
-* 403: Permission denied
+- Add/view listings
+- Add/view/delete reviews
+- Connected to MongoDB Atlas
+- Exposed via CLI tool
 
 ---
 
-### ✅ Get Active Users (Admin Only)
+## ⚙️ Admin Panel (Django)
 
-**URL:** `/api/get_active_users`
-**Method:** `GET`
-**Auth Required:** ✅ (Admin only)
-
-**Success Response:**
-
-```json
-[
-  {
-    "userName": "janedoe",
-    "email": "jane@example.com",
-    ...
-  },
-  ...
-]
-```
-
-**Error Responses:**
-
-* 401: Authentication required
-* 403: Permission denied
+- URL: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+- Use the superuser credentials you created.
 
 ---
 
-### ❌ Delete User (Admin Only)
+## 📝 Developer Notes
 
-**URL:** `/api/delete_user`
-**Method:** `POST`
-**Auth Required:** ✅ (Admin only)
-
-**Request Body:**
-
-```json
-{
-  "userName": "johndoe"
-}
-```
-
-**Success Response:**
-
-```json
-{
-  "message": "User deleted successfully"
-}
-```
-
-**Error Responses:**
-
-* 401: Authentication required
-* 403: Permission denied
-* 404: User not found
+- Django uses session-based authentication (`request.session`)
+- Ensure `Role` model is populated for proper user registration
+- Users are soft-deleted (`isDeleted` field)
+- FastAPI uses MongoDB Atlas and environment variables via `.env`
 
 ---
 
-### 🟢 Activate User (Admin Only)
-
-**URL:** `/api/activate_user`
-**Method:** `POST`
-**Auth Required:** ✅ (Admin only)
-
-**Request Body:**
-
-```json
-{
-  "userName": "johndoe"
-}
-```
-
-**Success Response:**
-
-```json
-{
-  "message": "User activated successfully"
-}
-```
-
-**Error Responses:**
-
-* 401: Authentication required
-* 403: Permission denied
-* 404: User not found
-* 400: User is already active
-
----
-
-## ⚠️ Notes
-
-* Session-based authentication is used (`request.session`).
-* Only users with `roleName` = `'admin'` are authorized to use admin-level endpoints.
-* Users are soft-deleted using the `isDeleted` field.
-* Ensure the `Role` model is properly populated for registration to work.
-
----
-
-## ✅ Requirements
-
-* Django
-* Django REST Framework
-
----
-
-## 🛠️ Run the Server
+## 💾 Save Your Dependencies
 
 ```bash
-python manage.py runserver
+pip freeze > requirements.txt
 ```
 
 ---
 
-## 🧪 Testing
+## 🧠 Support
 
-Use tools like Postman or curl to test endpoints, making sure cookies are preserved for session-based authentication.
-
-
-## ⚙️ Admin Panel
-
-Access the Django admin at:
-
-[http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
-
-Login with your superuser credentials.
-
----
-
-## 📝 Notes
-
-- Ensure your `User` model includes fields like `isDeleted`, `isLogin`, `loginTime`, `logoutTime`, and links to `Role`.
-- You must have predefined roles in your `Role` model (e.g., Admin, User).
-- Always check migrations after modifying models.
-
----
-
-## 📬 Support
-
-If you get stuck, feel free to open an issue or contact the developer.
-
-# Vacation Home Listings Microservice
-
-This is the backend microservice for managing vacation home listings and user reviews.
-
-## Features
-
-•⁠  ⁠Add vacation listings
-•⁠  ⁠View all listings (in process)
-•⁠  ⁠View individual listing (in process)
-•⁠  ⁠Add reviews
-•⁠  ⁠Built with FastAPI + MongoDB Atlas
-•⁠  ⁠Runs inside Docker
-
-## Setup Instructions
-
-### Using Docker
-```bash
-docker-compose up --build
+If you get stuck, open an issue or contact the developer.
