@@ -140,6 +140,8 @@ def delete_user(request):
         return JsonResponse({'error': 'User not found'}, status=404)
 
     user_to_delete.isDeleted = True
+    user_to_delete.isActive = False
+    user_to_delete.isLogin = False
     user_to_delete.save()
 
     return JsonResponse({'message': 'User deleted successfully'}, status=200)
