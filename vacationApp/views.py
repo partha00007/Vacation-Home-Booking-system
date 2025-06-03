@@ -1,4 +1,34 @@
-## Originally created by Shanjida, modified by Partha to add session validation for FastAPI
+"""
+================================================================================
+User Management API Views - Django + DRF
+--------------------------------------------------------------------------------
+Originally created by: Shanjida  
+Modified by: Partha  
+
+Description:
+------------
+This module provides a set of API endpoints for user authentication and management 
+within a Django-based backend using Django REST Framework. The key features include:
+
+- User registration with role validation
+- User login with session-based authentication
+- User logout with session invalidation
+- Session validation for FastAPI integration or front-end use
+- Retrieval of all users (admin-only access)
+- Retrieval of active users (admin-only access)
+- Soft deletion of users (admin-only access)
+- Activation of inactive users (admin-only access)
+
+Session handling is implemented using Django's built-in session middleware.
+
+Note:
+-----
+Only authenticated and logged-in admin users are permitted to perform user listing, 
+deletion, and activation operations. All sessions are tracked by storing `userName` 
+in the session object upon login.
+================================================================================
+"""
+
 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
