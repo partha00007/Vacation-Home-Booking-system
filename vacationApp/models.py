@@ -1,3 +1,39 @@
+"""
+================================================================================
+User and Role Models - Django ORM
+--------------------------------------------------------------------------------
+Created by: Shanjida  
+
+
+Description:
+------------
+Defines the core database models for user management using Django's ORM.
+
+Models:
+-------
+1. Role:
+    - roleId (Primary Key)
+    - roleName (Unique)
+    - isDeleted (Soft delete flag)
+
+2. User:
+    - userId (Primary Key)
+    - userName (Unique)
+    - password (Hashed, automatically on save)
+    - firstName, lastName
+    - email (Unique), mobileNo
+    - role (ForeignKey to Role)
+    - loginTime, logoutTime
+    - isLogin, isActive, isDeleted (Flags for session and state tracking)
+
+Features:
+---------
+- User passwords are securely hashed using Django’s `make_password` before save.
+- Includes `__str__` methods for clear model string representations.
+- Supports soft deletion via `isDeleted` flags.
+================================================================================
+"""
+
 from django.db import models
 from django.contrib.auth.hashers import make_password
 

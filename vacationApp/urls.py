@@ -1,4 +1,34 @@
-#Created by Shanjida but modified by Partha
+"""
+================================================================================
+User Management API URL Configuration - Django
+--------------------------------------------------------------------------------
+Created by: Shanjida  
+Modified by: Partha  
+Last Updated: [Insert Date Here]
+
+Description:
+------------
+Defines URL patterns for user management features in the application. These routes 
+are connected to the corresponding view functions that handle registration, login, 
+logout, session validation, user activation, deletion, and data retrieval.
+
+Key Endpoints:
+--------------
+- POST   /register/           : Register a new user
+- POST   /login/              : Authenticate user and initiate session
+- POST   /logout/             : Logout user and clear session
+- GET    /users/              : Get all users (admin only)
+- GET    /users/active/       : Get all active users (admin only)
+- POST   /users/delete/       : Soft delete a user by username (admin only)
+- POST   /users/activate/     : Reactivate a user account (admin only)
+- GET    /validate_session/   : Check if user session is valid
+
+Note:
+-----
+Some endpoints are restricted to admin users and require session-based authentication.
+================================================================================
+"""
+
 from django.urls import path
 from . import views
 

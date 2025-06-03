@@ -1,3 +1,35 @@
+"""
+================================================================================
+User and Role Serializers - Django REST Framework
+--------------------------------------------------------------------------------
+Created by: Shanjida  
+
+Description:
+------------
+This module defines serializers for the User and Role models, used to convert 
+model instances to and from JSON format and to handle validation logic.
+
+Serializers:
+------------
+- RoleSerializer:
+    Serializes Role model with fields: roleId, roleName.
+
+- UserSerializer:
+    Serializes User model with support for:
+    - Nested RoleSerializer (read-only)
+    - Password hashing using Django's make_password
+    - Validation for password length, unique userName and email
+    - Role assignment during user creation via roleId from input data
+
+Notes:
+------
+- The `password` field is write-only for security.
+- Custom validation ensures proper user creation and data integrity.
+================================================================================
+"""
+
+
+
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
