@@ -29,7 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClientFastAPI {
 
     // Base URL of the FastAPI backend — no /api/ prefix
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+    private const val BASE_URL = "http://10.0.2.2:8001/"
 
     // Singleton Retrofit instance
     private var retrofit: Retrofit? = null
