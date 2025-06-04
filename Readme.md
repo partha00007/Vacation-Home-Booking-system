@@ -175,3 +175,29 @@ docker-compose up --build
 •	Use Swagger UI for easy API testing
 •	Use Postman with cookies if needed
 ________________________________________
+
+
+Alternative: (if you are having problem in docker)
+
+install all the dependencies from requirement.txt
+open a terminal run python manage.py runserver
+Open another terminal run uvicorn main:app --reload --port 8001
+Open 3 terminal where you set up your virtual environment 
+then login with python Cli_admin.py login partha08 641526641527 (or any superuser)
+then you can able to run all this for example : python Cli_admin.py users list
+or python Cli_admin.py listings list 
+
+or in postman(example) : (backend) { GET} {http://localhost:8001/listings/1003530/reviews}
+open header ,set Cookie
+vale: sessionid=pggzakmbjpvzezea2l8jeons2dqkvccu
+Then you can see something like this 
+{
+        "_id": "4351675",
+        "date": "2013-04-29T04:00:00",
+        "listing_id": "1003530",
+        "reviewer_id": "3708459",
+        "reviewer_name": "Josh",
+        "comments": "i had a really pleasant stay at greta's place. the location is super convenient -- and the area is fun, with lots of hidden gems. the apartment was comfortable and charming. greta was accommodating and hospitable and left some great cupcakes in the fridge. i give this place a strong endorsement."
+    },
+
+Thank you.
