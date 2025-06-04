@@ -1,0 +1,58 @@
+#partha
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: vacationdb
+      POSTGRES_USER: youruser
+      POSTGRES_PASSWORD: yourpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - mongodb
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - mongodb
+    command: >
+      sh -c "uvicorn api_main:app --host 0.0.0.0 --port 8001 --reload"
+
+volumes:
+  pgdata:
+  mongodb_data:
