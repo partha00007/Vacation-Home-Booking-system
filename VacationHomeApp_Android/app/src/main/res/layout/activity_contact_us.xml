@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/white">
+
+        <!-- Custom Top App Bar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/red_primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title=""
+            app:contentInsetStart="0dp">
+
+            <!-- Logo and Menu Icon Layout -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- App logo on left -->
+                <ImageView
+                    android:id="@+id/logoImage"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/vacanza_logo"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@string/app_logo" />
+
+                <!-- Custom drawer icon on right -->
+                <ImageView
+                    android:id="@+id/customDrawerIcon"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_menu"
+                    android:scaleType="centerInside"
+                    android:contentDescription="Menu" />
+
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Content Area -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/contactHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact Us"
+                    android:textColor="@color/red_primary"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/contactText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/black"
+                    android:text="If you need any help, have questions, or suggestions, feel free to reach out to us. We’d be happy to assist you!\n\n👩‍💻 Team Members &amp; Roles:\n\n• Sana Pervaiz (Frontend Developer)\n  📧 Sana.Pervaiz@hsrw.org\n\n• Shanjida Rahman (Django Backend Developer)\n  📧 Shanjida.Rahaman@hsrw.org\n\n• Shashank Bhardwaj (FastAPI Backend Developer)\n  📧 Shashank.Bhardwaj@hsrw.org\n\n• Partha Mukherjee Munna (CLI Admin Developer)\n  📧 Partha-Mukherjee.Munna@hsrw.org\n\nThank you for using Vacanza!" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@android:color/white"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header" />
+</androidx.drawerlayout.widget.DrawerLayout>

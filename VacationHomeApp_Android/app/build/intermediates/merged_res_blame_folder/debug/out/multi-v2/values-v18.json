@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.vacationhome.app-mergeDebugResources-31:/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\sanap\\.gradle\\caches\\8.10\\transforms\\a0f3910fc29b6fc84e246862b444803b\\transformed\\appcompat-1.6.1\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}

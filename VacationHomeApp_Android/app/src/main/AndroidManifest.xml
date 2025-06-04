@@ -1,0 +1,53 @@
+<!--
+    Developed by Sana Pervaiz
+    Matriculation Number: 28933
+
+    App Name: Vacanza
+
+    Description: This is the manifest file for the Vacanza Android app.
+    It defines essential information about the app, including its package name, required permissions,
+    app-wide settings, and all declared activities such as home, login, signup, and listing details.
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vacationhome.app">
+
+    <!-- Permission to access the Internet (required for backend communication) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.VacationHomeApp"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <!-- Main launcher activity that starts when the app is opened -->
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity for user login -->
+        <activity android:name=".LoginActivity" />
+
+        <!-- Activity showing information about the application -->
+        <activity android:name=".AboutUsActivity" />
+
+        <!-- Activity for contacting the development/support team -->
+        <activity android:name=".ContactUsActivity" />
+
+        <!-- Activity for new user registration -->
+        <activity android:name=".SignUpActivity" />
+
+        <!-- Activity showing detailed listing information -->
+        <activity android:name=".ListingDetailsActivity" />
+
+    </application>
+</manifest>

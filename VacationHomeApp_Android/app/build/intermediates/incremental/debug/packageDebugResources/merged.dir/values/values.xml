@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="ic_launcher_background">#070707</color>
+    <color name="red_dark">#8B0000</color>
+    <color name="red_primary">#FF0000</color>
+    <color name="white">#FFFFFF</color>
+    <string name="app_logo">Vacanza</string>
+    <string name="app_name">Vacanza</string>
+    <string name="close">Close</string>
+    <string name="close_login_button">Close Login</string>
+    <string name="close_menu">Close Menu</string>
+    <string name="close_signup_button">Close Signup</string>
+    <string name="filter">Filter</string>
+    <string name="hint_comment">Write your comment</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_username">Username</string>
+    <string name="login">Login</string>
+    <string name="menu">Menu</string>
+    <string name="navigation_drawer_close">Close Navigation</string>
+    <string name="navigation_drawer_open">Open Navigation</string>
+    <string name="price_format">Price: $%.2f</string>
+    <string name="price_format_double">Price: $%.2f</string>
+    <string name="recycler_view_listings_description">List of vacation home listings</string>
+    <string name="signup">Sign Up</string>
+    <string name="sort">Sort</string>
+    <string name="submit">Submit</string>
+    <string name="vacanza">Vacanza</string>
+    <style name="Theme.VacationHomeApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/red_primary</item>
+        <item name="colorPrimaryVariant">@color/red_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+    </style>
+</resources>
