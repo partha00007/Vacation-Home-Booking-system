@@ -6,7 +6,7 @@ import user_listing
 import user_reviews
 from formatter import print_users, print_message
 from formatter import print_reviews
-from dotenv import load_dotenv
+from dotenv import load_dotenv # Loading environment variables for fastapi and django base URLs
 from api_test import test_api_endpoints
 
 # --- Session handling ---
@@ -44,7 +44,7 @@ def cli():
     """Admin CLI Tool to manage users, listings, and reviews."""
     pass
 
-# -------- AUTH --------
+# -------- AUTH Commands--------
 @cli.command("login")
 @click.argument("username")
 @click.argument("password")
@@ -68,7 +68,7 @@ def login_admin(username, password):
         click.secho(f"❌ {response.json().get('error', 'Login failed')}", fg="red")
         return False, response.json().get("error", "Login failed")
 
-# -------- USERS --------
+# -------- USERS Commands--------
 @cli.group()
 def users():
     """Manage users"""
@@ -94,7 +94,7 @@ def activate_user(user_name):
     status, message = list_user.activate_user(user_name)
     print_message(status, message)
 
-# -------- LISTINGS --------
+# -------- LISTINGS Commands--------
 @cli.group()
 def listings():
     """Manage listings"""
@@ -133,7 +133,7 @@ def list_all_listings():
         response.raise_for_status()
         data = response.json()
 
-        # Optional: Call your rich formatter
+        # Call your rich formatter
         from formatter import print_listings
         print_listings(data)
 
@@ -143,7 +143,7 @@ def list_all_listings():
         click.secho(f"❌ Request failed → {e}", fg="red")
 
 
-        #new added for delete listing
+#for delete listing
 @listings.command("delete")
 @click.argument("listing_id")
 def delete_listing(listing_id):
@@ -171,7 +171,7 @@ def delete_listing(listing_id):
 
 
 
-# -------- REVIEWS --------
+# -------- REVIEWS commands --------
 @cli.group()
 def reviews():
     """Manage reviews"""
