@@ -51,43 +51,29 @@ class Listing(BaseModel):
             }
         }
 
-# --- Routes ---
-@router.get("/db-status")
-async def db_status():
-    try:
-        client.admin.command("ping")
-        return {"status": "connected"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"DB error: {e}")
-#---------------Delete Listing--------------------
-@router.delete("/listings/{listing_id}", dependencies=[Depends(validate_session)])
-async def delete_listing(listing_id: str):
-    # Try to delete the listing directly by _id
-    result = listings_collection.delete_one({"_id": listing_id})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Listing not found")
-    return {"message": "Listing deleted successfully"}
-
-
-
-@router.get("/listings", response_model=List[ListingOut]) #modified by Partha 
+# --- Routes --- #modification starts from here by Partha 
+@router.get("/listings", response_model=List[ListingOut])
 async def get_listings():
-    listings = list(listings_collection.find().limit(15)) #Increase the limit so see more listings
+    # Fetch all listings, limit to 15
+    listings = list(listings_collection.find().limit(15))
+    
     cleaned_listings = []
-
     for listing in listings:
+        # Ensure _id is always a string
         listing["_id"] = str(listing["_id"])
-
+        
+        # Use fallback values if keys missing
         title = listing.get("name") or listing.get("title", "No Title")
         location = listing.get("address", {}).get("country", "Unknown")
-
         price = listing.get("price", 0)
         if isinstance(price, Decimal128):
             price = float(price.to_decimal())
-
+        else:
+            price = float(price)
         description = listing.get("description", "No description")
         reviews = listing.get("reviews", [])[:2]
-        
+
+        # Create cleaned listing
         cleaned_listings.append({
             "_id": listing["_id"],
             "title": title,
@@ -97,59 +83,107 @@ async def get_listings():
             "reviews": reviews
         })
 
+    # Return the formatted list
     return cleaned_listings
 
-
-@router.post("/listings", status_code=status.HTTP_201_CREATED)
-def add_listing(listing: Listing):
-    listing_dict = listing.dict()
-    result = listings_collection.insert_one(listing_dict)
-    return {"message": "Listing created", "id": str(result.inserted_id)}
-
-@router.get("/listings/{_id}", response_model=ListingOut)
-def get_listing(_id: str):
+#newly added
+@router.get("/listings/{listing_id}", response_model=ListingOut)
+async def get_listing(listing_id: str):
     try:
-        listing = listings_collection.find_one({"_id": ObjectId(_id)})
+        # Try finding by string _id
+        listing = listings_collection.find_one({"_id": listing_id})
         if not listing:
-            raise HTTPException(status_code=404, detail="Listing not found")
+            # Fallback to ObjectId
+            try:
+                listing = listings_collection.find_one({"_id": ObjectId(listing_id)})
+            except Exception:
+                pass
+            if not listing:
+                raise HTTPException(status_code=404, detail="Listing not found")
+
         listing["_id"] = str(listing["_id"])
+        listing["title"] = listing.get("name") or listing.get("title", "No Title")
+        listing["location"] = listing.get("address", {}).get("country", "Unknown")
+
+        price = listing.get("price", 0)
+        if isinstance(price, Decimal128):
+            price = float(price.to_decimal())
+        elif price is None:
+            price = 0.0
+        else:
+            try:
+                price = float(price)
+            except Exception:
+                price = 0.0
+        listing["price"] = price
+
+        listing["description"] = listing.get("description", "No description")
+        listing["reviews"] = listing.get("reviews", [])
+
         return listing
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid ID format")
 
-@router.put("/listings/{_id}")
-def update_listing(_id: str, listing: Listing):
-    result = listings_collection.replace_one(
-        {"_id": ObjectId(_id)}, listing.dict()
-    )
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Listing not found")
-    return {"message": "Listing updated"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ID format: {e}")
 
 
+# --- Fix other endpoints for _id handling ---
 
-@router.delete("/listings/{listing_id}/reviews/{review_id}", dependencies=[Depends(validate_session)]) #partha modified
+@router.delete("/listings/{listing_id}", dependencies=[Depends(validate_session)])
+async def delete_listing(listing_id: str):
+    try:
+        result = listings_collection.delete_one({"_id": listing_id})
+        if result.deleted_count == 0:
+            # Try ObjectId fallback
+            try:
+                result = listings_collection.delete_one({"_id": ObjectId(listing_id)})
+            except:
+                pass
+            if result.deleted_count == 0:
+                raise HTTPException(status_code=404, detail="Listing not found")
+        return {"message": "Listing deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ID format: {e}")
+
+@router.delete("/listings/{listing_id}/reviews/{review_id}", dependencies=[Depends(validate_session)])
 async def delete_review(listing_id: str, review_id: str):
-    result = listings_collection.update_one(
-        {"_id": listing_id},
-        {"$pull": {"reviews": {"_id": review_id}}}
-    )
-    if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Review not found")
-    return {"message": "Review deleted successfully"}
+    try:
+        result = listings_collection.update_one(
+            {"_id": listing_id},
+            {"$pull": {"reviews": {"_id": review_id}}}
+        )
+        if result.modified_count == 0:
+            # Fallback to ObjectId
+            try:
+                result = listings_collection.update_one(
+                    {"_id": ObjectId(listing_id)},
+                    {"$pull": {"reviews": {"_id": review_id}}}
+                )
+            except:
+                pass
+            if result.modified_count == 0:
+                raise HTTPException(status_code=404, detail="Review not found")
+        return {"message": "Review deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ID format: {e}")
 
-@router.get("/listings/{listing_id}/reviews", dependencies=[Depends(validate_session)]) #partha modified
+
+@router.get("/listings/{listing_id}/reviews", dependencies=[Depends(validate_session)])
 async def get_reviews_for_listing(listing_id: str):
     try:
         listing = listings_collection.find_one({"_id": listing_id})
         if not listing:
-            raise HTTPException(status_code=404, detail="Listing not found")
+            # Try ObjectId fallback
+            try:
+                listing = listings_collection.find_one({"_id": ObjectId(listing_id)})
+            except:
+                pass
+            if not listing:
+                raise HTTPException(status_code=404, detail="Listing not found")
         return listing.get("reviews", [])
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid ID format")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ID format: {e}")
 
-
-@router.post("/listings/{listing_id}/reviews", status_code=status.HTTP_201_CREATED, dependencies=[Depends(validate_session)]) #partha modified
+@router.post("/listings/{listing_id}/reviews", status_code=status.HTTP_201_CREATED, dependencies=[Depends(validate_session)])
 async def add_review(listing_id: str, review: Review):
     try:
         result = listings_collection.update_one(
@@ -157,8 +191,16 @@ async def add_review(listing_id: str, review: Review):
             {"$push": {"reviews": review.dict()}}
         )
         if result.matched_count == 0:
-            raise HTTPException(status_code=404, detail="Listing not found")
+            # Fallback to ObjectId
+            try:
+                result = listings_collection.update_one(
+                    {"_id": ObjectId(listing_id)},
+                    {"$push": {"reviews": review.dict()}}
+                )
+            except:
+                pass
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Listing not found")
         return {"message": "Review added"}
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid ID format")
-
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ID format: {e}")
