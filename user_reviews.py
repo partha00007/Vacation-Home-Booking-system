@@ -17,6 +17,15 @@ if os.path.exists(SESSION_FILE):
         cookies = json.load(f)
         session.cookies.update(cookies)
 
+"""
+    This function fetches reviews for a given listing by its listing ID.
+    Args:
+    - listing_id (str): The unique ID of the listing to fetch reviews for.
+    Returns:
+    - If successful: A list of reviews in JSON format.
+    - If an error occurs: A list with an error message.
+    """
+
 def get_reviews_by_listing_id(listing_id):
     url = f"{FASTAPI_BASE}/listings/{listing_id}/reviews"
     try:
