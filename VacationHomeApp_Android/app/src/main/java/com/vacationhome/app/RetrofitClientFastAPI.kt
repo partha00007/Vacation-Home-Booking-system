@@ -4,10 +4,11 @@
  *
  * App Name: Vacanza
  *
- * Description: This object initializes a Retrofit client configured to communicate
- * with a FastAPI backend. It includes custom cookie handling to manage session cookies
- * manually via a CookieJar implementation. The singleton pattern ensures that only one
- * Retrofit instance is created during the app's lifecycle.
+ * Description:
+ * This object initializes a Retrofit client configured to communicate
+ * with a FastAPI backend server. It uses a custom CookieJar to handle session
+ * cookies manually (useful for Django/CSRF/session-based auth).
+ * The singleton pattern ensures only one instance of Retrofit is used.
  */
 
 package com.vacationhome.app
@@ -21,27 +22,35 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * Retrofit client for FastAPI backend (no "/api/" prefix, since our router is mounted at "/listings")
+ * RetrofitClientFastAPI:
+ * A Retrofit client specifically configured for FastAPI without "/api/" prefix.
+ * Handles cookies manually to support session-based authentication.
  */
 object RetrofitClientFastAPI {
 
-    // CHANGE THIS: remove "/api/" because FastAPI is serving at e.g. http://10.0.2.2:8000/listings
+    // Base URL of the FastAPI backend — no /api/ prefix
     private const val BASE_URL = "http://10.0.2.2:8000/"
 
+    // Singleton Retrofit instance
     private var retrofit: Retrofit? = null
 
-    // In-memory cookie store (if you need session‐based authentication)
+    // In-memory cookie storage
     private val cookieStore: HashMap<String, List<Cookie>> = HashMap()
 
+    // CookieJar implementation to store and send cookies manually
     private val cookieJar = object : CookieJar {
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
             cookieStore[url.toString()] = cookies
         }
+
         override fun loadForRequest(url: HttpUrl): List<Cookie> {
             return cookieStore[url.toString()] ?: ArrayList()
         }
     }
 
+    /**
+     * Returns a singleton instance of ApiService configured for FastAPI.
+     */
     fun getInstance(context: Context): ApiService {
         if (retrofit == null) {
             val client = OkHttpClient.Builder()

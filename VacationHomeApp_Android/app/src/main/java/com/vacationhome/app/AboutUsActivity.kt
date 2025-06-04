@@ -4,9 +4,10 @@
  *
  * App Name: Vacanza
  *
- * Description: This activity displays information about the Vacanza app, such as the purpose of the app,
- * developer info, or company background. It extends BaseActivity to inherit shared UI behavior
- * (such as toolbar setup). It uses the layout defined in activity_about_us.xml.
+ * Description:
+ * This activity displays information about the Vacanza app, such as its purpose,
+ * developer background, or company mission. It uses a shared toolbar (inherited
+ * from BaseActivity) and includes navigation to the home screen.
  */
 
 package com.vacationhome.app
@@ -16,17 +17,19 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
-// Activity class that presents an "About Us" page in the application
+// AboutUsActivity:
+// This screen presents information about the app and team.
+// It extends BaseActivity to reuse common toolbar behavior.
 class AboutUsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_us)
 
-        // Set up the common toolbar defined in BaseActivity
+        // Set up toolbar from BaseActivity (shared UI layout)
         setupToolbar()
 
-        // Navigate to Home when logo is clicked
+        // Handle logo click to return to HomeActivity
         findViewById<ImageView>(R.id.logoImage)?.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
         }

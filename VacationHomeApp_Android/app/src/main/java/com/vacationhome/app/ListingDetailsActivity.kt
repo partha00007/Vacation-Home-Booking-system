@@ -1,3 +1,16 @@
+/*
+ * Developed by Sana Pervaiz
+ * Matriculation Number: 28933
+ *
+ * App Name: Vacanza
+ *
+ * Description:
+ * This activity shows the full details of a selected vacation home listing.
+ * It displays the image, title, price, description, and up to 8 reviews.
+ * The screen includes a Book button, a back button, and a conditional Add Review button
+ * (only available if the user is logged in). Listing data is retrieved from the backend using Retrofit.
+ */
+
 package com.vacationhome.app
 
 import android.content.Intent
@@ -16,6 +29,11 @@ import com.vacationhome.app.models.Listing
 import com.vacationhome.app.models.Review
 import kotlinx.coroutines.launch
 
+/**
+ * ListingDetailsActivity:
+ * Displays the full view of a vacation home listing.
+ * Shows an image, metadata, and up to 8 user reviews.
+ */
 class ListingDetailsActivity : AppCompatActivity() {
 
     private lateinit var reviewRecyclerView: RecyclerView
@@ -26,6 +44,7 @@ class ListingDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listing_details)
 
+        // Get data passed from previous activity
         val listingId = intent.getStringExtra("listing_id")
         val passedImageUrl = intent.getStringExtra("image_url")
 
@@ -35,16 +54,18 @@ class ListingDetailsActivity : AppCompatActivity() {
             return
         }
 
+        // Setup review RecyclerView
         reviewRecyclerView = findViewById(R.id.reviewRecyclerView)
         reviewRecyclerView.layoutManager = LinearLayoutManager(this)
         reviewAdapter = ReviewAdapter(reviewList)
         reviewRecyclerView.adapter = reviewAdapter
 
+        // Back button returns to previous screen
         findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
             finish()
         }
 
-        // ✅ Add Review Button with Login Check
+        // Add Review button (checks if user is logged in first)
         findViewById<ImageButton>(R.id.addReviewButton)?.setOnClickListener {
             val prefs = getSharedPreferences("VacanzaPrefs", MODE_PRIVATE)
             val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
@@ -58,16 +79,18 @@ class ListingDetailsActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Book Button shows confirmation toast
+        // Book button shows confirmation toast
         findViewById<Button>(R.id.bookButton)?.setOnClickListener {
             Toast.makeText(this, "Booking Successful!", Toast.LENGTH_SHORT).show()
         }
 
+        // Load listing details and reviews from backend
         lifecycleScope.launch {
             try {
                 val listing = RetrofitClient.getInstance(this@ListingDetailsActivity)
                     .getListingById(listingId)
 
+                // Load image using passed URL or fallback to backend-provided image
                 Glide.with(this@ListingDetailsActivity)
                     .load(passedImageUrl ?: listing.imageUrl)
                     .into(findViewById(R.id.detailImage))
@@ -83,6 +106,10 @@ class ListingDetailsActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Populates the UI fields with listing data.
+     * Displays up to 8 reviews in the RecyclerView.
+     */
     private fun populateListingDetails(listing: Listing) {
         findViewById<TextView>(R.id.detailTitle).text = listing.title
         findViewById<TextView>(R.id.detailPrice).text = "$${listing.price}"

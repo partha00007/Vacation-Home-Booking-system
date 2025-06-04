@@ -4,15 +4,17 @@
  *
  * App Name: Vacanza
  *
- * Description: This data class defines the structure of the login request
- * payload sent to the backend API. It includes the user's username and password.
+ * Description:
+ * This data class defines the structure of the login request payload
+ * sent to the backend API. It includes two fields: userName and password.
+ * The backend uses this object to authenticate the user's credentials.
  */
 
 package com.vacationhome.app.models
 
 /**
- * Represents the body of a login request sent to the backend.
- * Used for authenticating users.
+ * LoginRequest:
+ * Represents the JSON body sent when performing user login.
  */
 data class LoginRequest(
     val userName: String,

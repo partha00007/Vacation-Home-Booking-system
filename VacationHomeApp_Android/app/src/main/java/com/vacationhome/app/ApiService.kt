@@ -4,10 +4,16 @@
  *
  * App Name: Vacanza
  *
- * Description: This interface defines the Retrofit API endpoints used by the Vacanza Android app
- * to communicate with the backend server. It includes methods for user login, signup, fetching listings,
- * posting new listings and reviews, and retrieving listing details by ID. Both suspend and non-suspend
- * versions are provided for compatibility with different parts of the app.
+ * Description:
+ * This interface defines the Retrofit API endpoints used by the Vacanza Android app
+ * to communicate with the backend server. It includes methods for:
+ * - User authentication (login, signup)
+ * - Fetching all listings
+ * - Fetching a listing by ID
+ * - Adding a new listing
+ * - Posting a review for a listing
+ * It supports both suspend (coroutines) and non-suspend (callback) approaches
+ * for flexibility in different UI components.
  */
 
 package com.vacationhome.app
@@ -20,13 +26,14 @@ import retrofit2.Response
 import retrofit2.http.*
 
 /**
- * Retrofit interface containing API endpoints for backend communication.
+ * ApiService:
+ * Retrofit interface that defines all HTTP operations the app performs against the backend.
  */
 interface ApiService {
 
     /**
-     * Login endpoint using POST method.
-     * Accepts a map of login credentials (username and password).
+     * Login (POST /login/)
+     * Sends user credentials and receives login response with user data or token.
      */
     @POST("login/")
     suspend fun login(
@@ -34,19 +41,21 @@ interface ApiService {
     ): Response<LoginResponse>
 
     /**
-     * Fetch all listings from the backend (suspend function).
+     * Fetch all listings (GET /listings/)
+     * Coroutine-based version.
      */
     @GET("listings/")
     suspend fun getListings(): Response<List<Listing>>
 
     /**
-     * Add a new listing to the backend (non-suspend for optional usage).
+     * Add a new listing (POST /listings/)
+     * Regular Call version for compatibility with non-coroutine components.
      */
     @POST("listings/")
     fun addListing(@Body listing: Listing): Call<Void>
 
     /**
-     * Post a review for a specific listing identified by ID.
+     * Post a review for a specific listing (POST /listings/{id}/reviews/)
      */
     @POST("listings/{id}/reviews/")
     suspend fun addReview(
@@ -55,19 +64,22 @@ interface ApiService {
     ): Response<Void>
 
     /**
-     * Fetch all listings using a regular Call object (non-suspend version).
+     * Get all listings (GET /listings/)
+     * Regular Call version.
      */
     @GET("listings/")
     fun getAllListings(): Call<List<Listing>>
 
     /**
-     * Fetch a specific listing by its ID.
+     * Get a listing by ID (GET /listings/{id}/)
+     * Retrieves detailed data for a specific listing.
      */
     @GET("listings/{id}/")
     suspend fun getListingById(@Path("id") id: String): Listing
 
     /**
-     * Register a new user account.
+     * Signup (POST /register/)
+     * Registers a new user with provided credentials.
      */
     @POST("register/")
     suspend fun signup(@Body credentials: Map<String, String>): Response<Void>

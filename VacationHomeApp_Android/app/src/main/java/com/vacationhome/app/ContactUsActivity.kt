@@ -4,9 +4,10 @@
  *
  * App Name: Vacanza
  *
- * Description: This activity provides the "Contact Us" page for the Vacanza app.
- * It allows users to view contact information for support or inquiries.
- * It extends BaseActivity to inherit toolbar and navigation drawer behavior.
+ * Description:
+ * This activity provides the "Contact Us" screen in the Vacanza app.
+ * It displays contact information such as email or phone number for user support or general inquiries.
+ * The activity extends BaseActivity to inherit shared toolbar and navigation drawer setup.
  */
 
 package com.vacationhome.app
@@ -15,17 +16,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 
-// Activity class that displays the Contact Us screen to the user
+// ContactUsActivity:
+// Activity responsible for showing contact details and enabling navigation back to Home.
 class ContactUsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contact_us)
 
-        // Set up the shared toolbar and navigation drawer
+        // Set up the standard toolbar and navigation drawer (from BaseActivity)
         setupToolbar()
 
-        // Navigate to Home when logo is clicked
+        // Logo click navigates to HomeActivity
         findViewById<ImageView>(R.id.logoImage)?.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
         }

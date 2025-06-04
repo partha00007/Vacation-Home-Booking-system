@@ -4,9 +4,11 @@
  *
  * App Name: Vacanza
  *
- * Description: This RecyclerView adapter is used to display user reviews in a list format.
- * Each item includes the reviewer's username, comment, and star rating. It is used in
- * the ListingDetailsActivity to show up to 8 recent reviews for a selected vacation home.
+ * Description:
+ * This RecyclerView adapter is used to display user reviews in a vertical list format.
+ * Each item includes the reviewer's username, comment, and star rating.
+ * It is used within ListingDetailsActivity to display up to 8 recent reviews
+ * for the selected vacation home.
  */
 
 package com.vacationhome.app
@@ -21,13 +23,15 @@ import com.vacationhome.app.models.Review
 import android.util.Log
 
 /**
- * RecyclerView adapter for displaying a list of reviews.
+ * ReviewAdapter:
+ * Adapter for rendering a list of reviews in a RecyclerView.
  */
 class ReviewAdapter(private val reviews: List<Review>) :
     RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
 
     /**
-     * ViewHolder representing a single review item.
+     * ReviewViewHolder:
+     * Holds references to each review item’s UI components.
      */
     inner class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val usernameText: TextView = itemView.findViewById(R.id.reviewUsername)
@@ -36,7 +40,7 @@ class ReviewAdapter(private val reviews: List<Review>) :
     }
 
     /**
-     * Inflates the layout for each review item.
+     * Inflates item_review layout for each row in the list.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -45,19 +49,20 @@ class ReviewAdapter(private val reviews: List<Review>) :
     }
 
     /**
-     * Binds the review data (username, comment, and rating) to the item view.
+     * Binds a Review object to the current ViewHolder.
      */
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = reviews[position]
         holder.usernameText.text = review.username
         holder.commentText.text = review.comment
         holder.ratingBar.rating = review.rating.toFloat()
-        Log.d("REVIEW_ADAPTER", "Review: ${review.username} - ${review.comment}")
 
+        // Debug log (optional)
+        Log.d("REVIEW_ADAPTER", "Review: ${review.username} - ${review.comment}")
     }
 
     /**
-     * Returns the total number of reviews.
+     * Returns the number of review items in the list.
      */
     override fun getItemCount(): Int = reviews.size
 }

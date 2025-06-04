@@ -4,10 +4,12 @@
  *
  * App Name: Vacanza
  *
- * Description: This adapter is used by the RecyclerView in HomeActivity to display vacation home
- * listings. It binds listing data such as title, price, and image to each grid item.
- * On clicking a listing, it opens the ListingDetailsActivity with the selected listing’s ID and image URL.
+ * Description:
+ * This adapter is used by the RecyclerView in HomeActivity to display vacation home
+ * listings in a two-column grid. It binds each listing's image, price, and title.
+ * Clicking on a listing opens the ListingDetailsActivity by passing its ID and image URL.
  */
+
 package com.vacationhome.app
 
 import android.content.Intent
@@ -21,13 +23,14 @@ import com.bumptech.glide.Glide
 import com.vacationhome.app.models.Listing
 
 /**
- * RecyclerView Adapter to render listings in a grid layout.
- * Accepts a list of Listing objects and binds them to item views.
+ * ListingAdapter:
+ * RecyclerView adapter that renders Listing items inside a grid layout.
+ * Used in HomeActivity to display listings interactively.
  */
 class ListingAdapter(private val listings: List<Listing>) :
     RecyclerView.Adapter<ListingAdapter.ListingViewHolder>() {
 
-    // Predefined set of 10 image URLs to simulate listing thumbnails (fallback if imageUrl is null)
+    // Fallback set of image URLs used when no imageUrl is provided by the backend
     private val imageUrls = listOf(
         "https://www.luxurychicagoapartments.com/wp-content/uploads/2023/03/DSC7197-scaled.jpg",
         "https://wpcdn.us-midwest-1.vip.tn-cloud.net/www.rimonthly.com/content/uploads/2022/08/n/i/406-emblem-125-mu-d2-cam4-scaled.jpg",
@@ -42,8 +45,8 @@ class ListingAdapter(private val listings: List<Listing>) :
     )
 
     /**
-     * ViewHolder class representing each item in the RecyclerView.
-     * Holds references to UI components for a listing.
+     * ListingViewHolder:
+     * Holds references to UI components inside each item view.
      */
     inner class ListingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val listingImage: ImageView = itemView.findViewById(R.id.listingImage)
@@ -52,7 +55,7 @@ class ListingAdapter(private val listings: List<Listing>) :
     }
 
     /**
-     * Inflates the layout for each item in the RecyclerView.
+     * Inflates item_listing.xml for each item in the grid.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListingViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -61,8 +64,10 @@ class ListingAdapter(private val listings: List<Listing>) :
     }
 
     /**
-     * Binds the listing data to each item view, including title, price, and image.
-     * Also sets up the click listener to navigate to the detail screen.
+     * Binds data to each grid item:
+     * - Displays title and price
+     * - Loads image using Glide
+     * - Sets click listener to open ListingDetailsActivity
      */
     override fun onBindViewHolder(holder: ListingViewHolder, position: Int) {
         val listing = listings[position]
@@ -71,15 +76,15 @@ class ListingAdapter(private val listings: List<Listing>) :
         holder.listingPrice.text = "Price: \$${listing.price}"
         holder.listingDesc.text = listing.title
 
-        // If the server didn’t provide an imageUrl, fall back to the predefined URLs
+        // Use listing image URL or fallback
         val imageUrl = listing.imageUrl ?: imageUrls[position % imageUrls.size]
 
-        // Load image using Glide
+        // Load image with Glide
         Glide.with(context)
             .load(imageUrl)
             .into(holder.listingImage)
 
-        // Handle click: navigate to listing detail view
+        // On click: navigate to details screen with listing ID and image
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ListingDetailsActivity::class.java).apply {
                 putExtra("listing_id", listing.id)
@@ -90,7 +95,7 @@ class ListingAdapter(private val listings: List<Listing>) :
     }
 
     /**
-     * Returns the number of items in the dataset.
+     * Returns total number of items in the list.
      */
     override fun getItemCount(): Int = listings.size
 }

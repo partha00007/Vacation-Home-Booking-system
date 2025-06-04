@@ -4,11 +4,14 @@
  *
  * App Name: Vacanza
  *
- * Description: This is the main screen (Home) of the Vacanza app where vacation home listings
- * are displayed. It includes logic for sorting and filtering listings by price, and integrates
- * a top toolbar with a navigation drawer. Listings are fetched from the backend and displayed
- * in a two-column grid layout.
+ * Description:
+ * This is the main screen (Home) of the Vacanza app where vacation home listings
+ * are displayed in a grid format. Users can filter listings by price range and sort
+ * them in ascending or descending order. The screen includes a top toolbar and navigation drawer,
+ * and all listings are fetched from the backend. This activity inherits common UI behavior
+ * from BaseActivity.
  */
+
 package com.vacationhome.app
 
 import android.view.View
@@ -29,8 +32,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * HomeActivity displays a grid of listings and supports filtering/sorting by price.
- * Inherits toolbar and drawer setup from BaseActivity.
+ * HomeActivity:
+ * Displays listings in a grid layout with sorting and filtering features.
+ * Inherits navigation and toolbar behavior from BaseActivity.
  */
 class HomeActivity : BaseActivity() {
 
@@ -40,31 +44,23 @@ class HomeActivity : BaseActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var listingAdapter: ListingAdapter
 
-    // Full list from backend
-    private var listings: List<Listing> = listOf()
-
-    // Filtered/sorted list displayed on screen
-    private var currentData: List<Listing> = listOf()
-
-    // Current filter (price range)
+    private var listings: List<Listing> = listOf()             // All listings from backend
+    private var currentData: List<Listing> = listOf()          // Filtered/sorted listings for display
     private var currentFilter: Pair<Int, Int> = 0 to Int.MAX_VALUE
-
-    // Current sort direction (true = ascending, false = descending, null = no sort)
-    private var sortAscending: Boolean? = null
+    private var sortAscending: Boolean? = null                 // Sorting preference: true, false, or null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         sharedPreferences = getSharedPreferences("VacanzaPrefs", MODE_PRIVATE)
-
         setupToolbar()
 
-        // Update login/logout menu item
+        // Set login/logout text based on user session state
         val loginItem = navView.menu.findItem(R.id.nav_login_logout)
         loginItem.title = if (sharedPreferences.getBoolean("isLoggedIn", false)) "Logout" else "Login"
 
-        // Handle navigation drawer item clicks
+        // Navigation drawer item handling
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -95,7 +91,7 @@ class HomeActivity : BaseActivity() {
             }
         }
 
-        // Setup UI components
+        // Initialize UI components
         filterButton = findViewById(R.id.filterButton)
         sortButton = findViewById(R.id.sortButton)
         recyclerView = findViewById(R.id.recyclerView)
@@ -103,7 +99,7 @@ class HomeActivity : BaseActivity() {
         listingAdapter = ListingAdapter(currentData)
         recyclerView.adapter = listingAdapter
 
-        // Handle filter button actions
+        // Set up filter popup menu
         filterButton.setOnClickListener { view ->
             val popup = PopupMenu(this, view)
             popup.menu.apply {
@@ -128,7 +124,7 @@ class HomeActivity : BaseActivity() {
             popup.show()
         }
 
-        // Handle sort button actions
+        // Set up sort popup menu
         sortButton.setOnClickListener { view ->
             val popup = PopupMenu(this, view)
             popup.menu.apply {
@@ -147,12 +143,12 @@ class HomeActivity : BaseActivity() {
             popup.show()
         }
 
-        // Fetch listings from backend
+        // Load listings from backend
         loadListings()
     }
 
     /**
-     * Fetch listings from the backend using Retrofit.
+     * Loads listings from the backend using Retrofit (asynchronously).
      */
     private fun loadListings() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -177,21 +173,21 @@ class HomeActivity : BaseActivity() {
     }
 
     /**
-     * Apply the selected filter and sort order to the listings and update the view.
-     * Also injects image URLs into each listing before passing to the adapter.
+     * Filters and sorts the list of listings based on user selection.
+     * Injects image URLs and updates the adapter.
      */
     private fun applyFilterAndSort() {
-        // Apply price filter
+        // Filter listings by price
         var result = listings.filter { it.price >= currentFilter.first && it.price <= currentFilter.second }
 
-        // Apply sort order
+        // Sort based on current sort direction
         result = when (sortAscending) {
             true -> result.sortedBy { it.price }
             false -> result.sortedByDescending { it.price }
             null -> result
         }
 
-        // Predefined set of 10 image URLs (for demonstration)
+        // Predefined image URLs (10 total for demo)
         val imageUrls = listOf(
             "https://www.luxurychicagoapartments.com/wp-content/uploads/2023/03/DSC7197-scaled.jpg",
             "https://wpcdn.us-midwest-1.vip.tn-cloud.net/www.rimonthly.com/content/uploads/2022/08/n/i/406-emblem-125-mu-d2-cam4-scaled.jpg",
@@ -205,12 +201,12 @@ class HomeActivity : BaseActivity() {
             "https://media.architecturaldigest.com/photos/63767b2a06a085bce7f12cfa/16:9/w_2560%2Cc_limit/20220922_Marin_AlexBass_025.jpg"
         )
 
-        // Assign images round-robin and limit to 15 results
+        // Inject images round-robin and trim to 15 items max
         currentData = result.take(15).mapIndexed { index, listing ->
             listing.copy(imageUrl = imageUrls[index % imageUrls.size])
         }
 
-        // Refresh adapter
+        // Refresh UI with new data
         listingAdapter = ListingAdapter(currentData)
         recyclerView.adapter = listingAdapter
     }

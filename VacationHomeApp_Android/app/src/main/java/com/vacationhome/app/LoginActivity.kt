@@ -4,9 +4,10 @@
  *
  * App Name: Vacanza
  *
- * Description: This activity allows users to log into the Vacanza app. It handles user input,
- * performs login authentication using a backend API, and manages session state via SharedPreferences.
- * It also provides navigation to the home screen and the sign-up screen.
+ * Description:
+ * This activity allows users to log into the Vacanza app.
+ * It handles user input, performs backend authentication, manages session state using SharedPreferences,
+ * and provides navigation to the Home screen and Sign-Up screen.
  */
 
 package com.vacationhome.app
@@ -26,7 +27,9 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 /**
- * LoginActivity handles user login and session persistence.
+ * LoginActivity:
+ * Handles user login and session persistence with SharedPreferences.
+ * Communicates with the backend API to authenticate user credentials.
  */
 class LoginActivity : AppCompatActivity() {
 
@@ -41,27 +44,28 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Initialize shared preferences
         sharedPreferences = getSharedPreferences("VacanzaPrefs", MODE_PRIVATE)
 
-        // Bind views to layout elements
+        // Bind UI elements
         emailInput = findViewById(R.id.editUsername)
         passwordInput = findViewById(R.id.editPassword)
         loginButton = findViewById(R.id.btnLogin)
         signUpButton = findViewById(R.id.btnSignUp)
         closeButton = findViewById(R.id.btnCloseSignup)
 
-        // Handle login button click
+        // Login button logic
         loginButton.setOnClickListener {
             val username = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
 
-            // Validate input
+            // Validate fields
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Perform login request using coroutine
+            // Make login API call
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val api = RetrofitClient.getInstance(this@LoginActivity)
@@ -70,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
                     val response = api.login(credentials)
 
                     if (response.isSuccessful && response.body() != null) {
-                        // Store login state
+                        // Save login session
                         sharedPreferences.edit {
                             putBoolean("isLoggedIn", true)
                             putString("username", username)
@@ -98,16 +102,15 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // Close button takes user to HomeActivity
+        // Close icon: return to HomeActivity
         closeButton.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
         }
 
-        // Sign-up button takes user to SignUpActivity
+        // Sign-up button: open SignUpActivity
         signUpButton.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
-
         }
     }
 }

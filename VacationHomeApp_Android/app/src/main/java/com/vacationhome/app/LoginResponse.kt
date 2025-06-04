@@ -4,18 +4,20 @@
  *
  * App Name: Vacanza
  *
- * Description: This data class represents the response returned by the backend API
- * after a login attempt. It includes a message (e.g., success or failure) and an optional
- * token (JWT) used for authenticated requests if login is successful.
+ * Description:
+ * This data class represents the response returned by the backend API
+ * after a login attempt. It contains a message indicating the outcome (success/failure)
+ * and optionally a JWT token used for authenticated requests.
  */
 
 package com.vacationhome.app.models
 
 /**
- * Model for the login response returned from the server.
+ * LoginResponse:
+ * Represents the server's response to a login request.
  *
- * @param message A status message describing the outcome.
- * @param token Optional JWT token if authentication is successful.
+ * @param message A human-readable status message.
+ * @param token A JWT token (if login is successful); null otherwise.
  */
 data class LoginResponse(
     val message: String,

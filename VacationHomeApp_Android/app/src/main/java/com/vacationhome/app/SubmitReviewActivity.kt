@@ -4,9 +4,11 @@
  *
  * App Name: Vacanza
  *
- * Description: This activity allows a logged-in user to submit a review for a selected listing.
- * It collects user input for the review comment and a rating (1–5), validates the input, and
- * sends it to the backend using a Retrofit API call. The review is associated with the listing ID.
+ * Description:
+ * This activity allows a logged-in user to submit a review for a selected listing.
+ * It collects a comment and a rating from the user, validates the input,
+ * and sends the review to the backend API via Retrofit.
+ * The submitted review is linked to a listing using its ID.
  */
 
 package com.vacationhome.app
@@ -23,28 +25,15 @@ import retrofit2.HttpException
 import androidx.drawerlayout.widget.DrawerLayout
 import android.view.Gravity
 
-
 /**
- * Activity for submitting a new review to a listing.
+ * SubmitReviewActivity:
+ * Allows users to post a review with comment and rating to a specific listing.
  */
 class SubmitReviewActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
-            finish() // Returns to ListingDetailsActivity
-        }
-
-        findViewById<ImageView>(R.id.customDrawerIcon)?.setOnClickListener {
-            val drawer = findViewById<DrawerLayout>(R.id.drawerLayout)
-            drawer.openDrawer(Gravity.END)
-        }
-
-        findViewById<ImageView>(R.id.logoImage)?.setOnClickListener {
-            finish() // Also returns to ListingDetailsActivity
-        }
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_submit_review)
 
@@ -53,26 +42,42 @@ class SubmitReviewActivity : AppCompatActivity() {
         val ratingEditText = findViewById<EditText>(R.id.ratingEditText)
         val submitButton = findViewById<Button>(R.id.submitReviewButton)
 
-        // Retrieve shared preferences and listing ID
+        // SharedPreferences to get username
         sharedPreferences = getSharedPreferences("VacanzaPrefs", MODE_PRIVATE)
         val listingId = intent.getStringExtra("listing_id") ?: return
         val username = sharedPreferences.getString("username", "Guest") ?: "Guest"
 
-        // Handle review submission
+        // Back button returns to ListingDetailsActivity
+        findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
+            finish()
+        }
+
+        // Drawer icon opens end drawer (if present)
+        findViewById<ImageView>(R.id.customDrawerIcon)?.setOnClickListener {
+            val drawer = findViewById<DrawerLayout>(R.id.drawerLayout)
+            drawer.openDrawer(Gravity.END)
+        }
+
+        // Clicking the logo also returns to ListingDetailsActivity
+        findViewById<ImageView>(R.id.logoImage)?.setOnClickListener {
+            finish()
+        }
+
+        // Handle submit button logic
         submitButton.setOnClickListener {
             val comment = reviewEditText.text.toString().trim()
             val rating = ratingEditText.text.toString().trim().toIntOrNull()
 
-            // Validate input
+            // Input validation
             if (comment.isEmpty() || rating == null || rating !in 1..5) {
                 Toast.makeText(this@SubmitReviewActivity, "Enter valid review and rating (1–5)", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Create review object with user input
+            // Construct review object
             val review = Review(username = username, comment = comment, rating = rating)
 
-            // Launch API call in coroutine
+            // Send review to backend
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val api = RetrofitClientFastAPI.getInstance(this@SubmitReviewActivity)

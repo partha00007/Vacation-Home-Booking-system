@@ -4,9 +4,10 @@
  *
  * App Name: Vacanza
  *
- * Description: This object sets up and provides a singleton Retrofit client instance
- * for making HTTP requests to the backend API. It includes a method to create an
- * implementation of the ApiService interface using the defined base URL.
+ * Description:
+ * This object sets up and provides a singleton Retrofit client instance
+ * for making HTTP requests to the backend API. It uses an OkHttp interceptor
+ * to attach an Authorization header when a JWT token is available.
  */
 
 package com.vacationhome.app
@@ -19,23 +20,26 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * Singleton object for initializing Retrofit with a base URL and HTTP client.
+ * RetrofitClient:
+ * Singleton object responsible for initializing and providing access
+ * to the Retrofit API interface. Adds authentication token if available.
  */
 object RetrofitClient {
 
-    // Base URL for the backend API
+    // Backend API base URL (local development - use 10.0.2.2 for emulator access)
     private const val BASE_URL = "http://10.0.2.2:8000/"
 
-    // Retrofit instance (lazy initialized)
+    // Retrofit instance, lazily initialized
     private var retrofit: Retrofit? = null
 
     /**
-     * Returns a singleton instance of ApiService.
-     * Automatically adds Authorization header if user is logged in.
+     * Returns an instance of ApiService.
+     * Adds Authorization header if a token exists in SharedPreferences.
      */
     fun getInstance(context: Context): ApiService {
         if (retrofit == null) {
-            // Token interceptor
+
+            // Interceptor to append token to each request if available
             val authInterceptor = Interceptor { chain ->
                 val originalRequest: Request = chain.request()
                 val prefs = context.getSharedPreferences("VacanzaPrefs", Context.MODE_PRIVATE)
@@ -52,10 +56,12 @@ object RetrofitClient {
                 chain.proceed(newRequest)
             }
 
+            // Build OkHttpClient with the token interceptor
             val client = OkHttpClient.Builder()
                 .addInterceptor(authInterceptor)
                 .build()
 
+            // Build Retrofit instance with base URL and Gson parser
             retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
@@ -63,6 +69,7 @@ object RetrofitClient {
                 .build()
         }
 
+        // Create and return an implementation of ApiService
         return retrofit!!.create(ApiService::class.java)
     }
 }
