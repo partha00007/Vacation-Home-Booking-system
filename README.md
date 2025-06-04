@@ -231,7 +231,36 @@ docker-compose up --build
 
 ## 📱 Android Frontend (Kotlin - Android Studio)
 
+### 🧊 Emulator Troubleshooting
+
+If Android Studio shows:
+
+> **Error running 'app': Device is already activating**  
+> **No connected devices**
+
+Follow these steps:
+
+#### ✅ 1. Cold Boot the Emulator
+- Go to **Tools > Device Manager**
+- Click the **▼ dropdown** next to your emulator and select **Cold Boot Now**
+
+#### ✅ 2. Wait Until Boot Finishes
+- The emulator must be fully booted (home screen responsive, no loading spinner)
+- Test by opening the app drawer or dragging down notifications
+
+#### ✅ 3. Check for Connection
+- Wait for Android Studio to detect the device (dropdown near the ▶ Run button should show it)
+- Once listed, hit ▶ again
+
+#### 🔁 Still Stuck?
+- Close the emulator and restart Android Studio
+- Open **Device Manager**, **cold boot** again, and try running the app
+
+> If needed, create a new emulator in **Device Manager** with a recommended image like **Pixel 6 API 33+**
+
+
 Once the backend (Django & FastAPI) and MongoDB are fully running:
+
 
 ### ✅ Requirements
 - Android Studio (latest version)
