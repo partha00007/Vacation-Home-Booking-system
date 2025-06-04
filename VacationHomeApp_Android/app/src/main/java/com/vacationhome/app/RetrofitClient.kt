@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
 
     // Backend API base URL (local development - use 10.0.2.2 for emulator access)
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+     private const val BASE_URL = "http://10.0.2.2:8000/api/"
 
     // Retrofit instance, lazily initialized
     private var retrofit: Retrofit? = null
