@@ -14,6 +14,8 @@ if os.path.exists(SESSION_FILE):
         cookies = requests.utils.cookiejar_from_dict(json.load(f))
         session.cookies = cookies
 
+"""This function sends a GET request to the '/listings/' endpoint to retrieve all listings from the backend API. 
+If the request is successful, it returns the listing data; otherwise, it returns an error message."""
 
 def list_listings():
     try:
