@@ -1,5 +1,5 @@
 # 🏡 Vacation Home Booking System
-
+This is a group project of 3 people. Distribution of this project preson 1(Django),person 2 (Android App) and me Partha Munna( Fastapi -CLI Tools-Mongodb)
 A full-stack microservices-based application that simulates an Airbnb-style platform for vacation home listings. Built using **Django**, **FastAPI**, **MongoDB Atlas**, and a powerful **CLI Admin Tool**, it runs seamlessly using **Docker**.
 
 ---
